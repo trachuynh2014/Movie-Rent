@@ -5,7 +5,7 @@ import "./App.css";
 import Customers from "./components/customers";
 import Rentals from "./components/rentals";
 import NotFound from "./components/notFound";
-import NavBar from "./components/common/navBar";
+import NavBar from "./components/navBar";
 import MoviesForm from "./components/moviesForm";
 import LoginForm from "./components/loginForm";
 import RegisterForm from "./components/registerForm";
