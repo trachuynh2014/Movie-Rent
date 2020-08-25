@@ -5,14 +5,14 @@ import Select from "./select";
 
 class Form extends Component {
   state = {
-    //data là dữ liệu mà t cần để t render label và input field tương ứng
+    //properties of data are the data that we need to render label and input field accordingly
     data: {},
-    // là lỗi sẽ xảy ra của các input field.
+    // errors will happen of input field
     errors: {},
   };
 
   validate = () => {
-    // việc này sẽ list ra tất cả các lỗi của tất cả input field
+    // its gonna list all the errors of all input field
     const options = { abortEarly: false };
     // destructuring
     const { error } = Joi.validate(this.state.data, this.schema, options);
@@ -20,7 +20,7 @@ class Form extends Component {
     if (!error) return null;
 
     const errors = {};
-    // set value cho cái errors property
+    // set value for errors property
     for (let item of error.details) errors[item.path[0]] = item.message;
     return errors;
   };
@@ -31,30 +31,35 @@ class Form extends Component {
     return error ? error.details[0].message : null;
   };
   handleSubmit = (e) => {
-    // điều này sẽ ngăn reload toàn bộ page
+    // this action will prevent page from reloading again
     e.preventDefault();
 
     const errors = this.validate();
-    // việc này ngăn chặn chuyện nếu k có lỗi xảy ra thì errors sẽ là empty object chứ k phải null
+    // this action will prevent the case that if there is no errors, the errors object will be an empty
+    // object, not a null
     this.setState({ errors: errors || {} });
     if (errors) return;
     this.doSubmit();
   };
+  // destructuring the currentTarget property of an event function and change its name to input
   handleChange = ({ currentTarget: input }) => {
     const errors = { ...this.state.errors };
     const errorMessage = this.validateProperty(input);
+    // set the errors for every input field dynamically
     if (errorMessage) errors[input.name] = errorMessage;
     else delete errors[input.name];
 
     const data = { ...this.state.data };
+    // set the data for every input field dynamically
+
     data[input.name] = input.value;
 
     this.setState({ data, errors });
   };
   renderInput = (name, label, type = "text") => {
-    // lấy dữ liệu từ state, vì thế, nếu property của data có giá trị k phải "", thì ban đầu giá trị của
-    // input field này cũng thế. Ví dụ username: "1" thì khi tạo ra input field thì giá trị ban đầu
-    // của username là 1
+    // get data from the state, therefore, if data's property's value is not "", the initial value of
+    // input field will be the same. For example, if username: '1', the input field of username will be
+    // initially set to 1
     const { data, errors } = this.state;
     return (
       <Input
@@ -68,6 +73,8 @@ class Form extends Component {
     );
   };
   renderSelect = (name, label, options) => {
+    // same thing as render Input but dropdown List (personally I dont think I need errors for this
+    //method (maybe I'm wrong))
     const { data, errors } = this.state;
     return (
       <Select

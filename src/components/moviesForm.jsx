@@ -35,6 +35,7 @@ class MoviesForm extends Form {
 
   componentDidMount() {
     const genres = getGenres();
+    // first time re-render
     // re-render lần 1
     this.setState({ genres });
 
@@ -43,12 +44,12 @@ class MoviesForm extends Form {
 
     const movie = getMovie(movieId);
     if (!movie) return this.props.history.replace("/not-found");
-    // re-render lần 2 với các properties của movie object
+    // second time re-render with properties of the movie object
     this.setState({ data: this.mapToViewModel(movie) });
   }
-  // việc tạo ra method này nhằm mục đích thể hiện dữ liệu specifically ở cái logic Form. Tại vì
-  // database của t mang 1 mục đích general. Do đó, để phục vụ cho việc display properties ở cái form này,
-  // t cần 1 method sao cho t phải tạo ra một object với các property giống với data ở state
+  // the purpose of this method is to display data specifically of logic Form. We all know that
+  // our database is for general purpose. Therefore, to display data at logic Form, We need a method
+  // at which we create an object with the same properties of data at the state
   mapToViewModel(movie) {
     return {
       _id: movie._id,
@@ -59,9 +60,9 @@ class MoviesForm extends Form {
     };
   }
   doSubmit = () => {
-    // lưu một bộ phim và sẽ push nó vào cái array movies.
+    // save a new movie and push it into a movies array
     saveMovie(this.state.data);
-    // sau khi lưu xong sẽ điều hướng quay về movie
+    //after that, redirect to /movies
     this.props.history.push("/movies");
   };
   render() {
