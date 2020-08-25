@@ -4,6 +4,7 @@ import Pagination from "./common/pagination";
 import { paginate } from "./../utils/paginate";
 import { getMovies } from "./../services/fakeMovieService";
 import { getGenres } from "./../services/fakeGenreService";
+import { Link } from "react-router-dom";
 import MoviesTable from "./moviesTable";
 import _ from "lodash";
 class Movies extends Component {
@@ -88,6 +89,13 @@ class Movies extends Component {
           />
         </div>
         <div className="col">
+          <Link
+            to="/movies/new"
+            className="btn btn-primary"
+            style={{ marginBottom: 20 }}
+          >
+            New Movie
+          </Link>
           <p style={{ fontWeight: "bold" }}>
             Showing {totalCount} movies in the database
           </p>
