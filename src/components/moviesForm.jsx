@@ -1,8 +1,8 @@
 import React from "react";
 import Joi from "joi-browser";
 import Form from "./common/form";
-import { getMovie, saveMovie } from "./../services/fakeMovieService";
-import { getGenres } from "./../services/fakeGenreService";
+import { getMovie, saveMovie } from "./../services/movieService";
+import { getGenres } from "./../services/genreService";
 class MoviesForm extends Form {
   state = {
     data: {
@@ -33,19 +33,27 @@ class MoviesForm extends Form {
       .label("Daily Rental Rate"),
   };
 
-  componentDidMount() {
-    const genres = getGenres();
+  async populateGenre() {
+    const { data: genres } = await getGenres();
     // first time re-render
-    // re-render lần 1
     this.setState({ genres });
+  }
 
-    const movieId = this.props.match.params.id;
-    if (movieId === "new") return;
-
-    const movie = getMovie(movieId);
-    if (!movie) return this.props.history.replace("/not-found");
-    // second time re-render with properties of the movie object
-    this.setState({ data: this.mapToViewModel(movie) });
+  async populateMovie() {
+    try {
+      const movieId = this.props.match.params.id;
+      if (movieId === "new") return;
+      const { data: movie } = await getMovie(movieId);
+      // second time re-render with properties of the movie object
+      this.setState({ data: this.mapToViewModel(movie) });
+    } catch (ex) {
+      if (ex.response && ex.response.status === 404)
+        this.props.history.replace("/not-found");
+    }
+  }
+  async componentDidMount() {
+    await this.populateGenre();
+    await this.populateMovie();
   }
   // the purpose of this method is to display data specifically of logic Form. We all know that
   // our database is for general purpose. Therefore, to display data at logic Form, We need a method
@@ -59,9 +67,9 @@ class MoviesForm extends Form {
       dailyRentalRate: movie.dailyRentalRate,
     };
   }
-  doSubmit = () => {
+  doSubmit = async () => {
     // save a new movie and push it into a movies array
-    saveMovie(this.state.data);
+    await saveMovie(this.state.data);
     //after that, redirect to /movies
     this.props.history.push("/movies");
   };
